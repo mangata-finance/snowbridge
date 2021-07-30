@@ -128,6 +128,7 @@ func (wr *EthereumChannelWriter) WriteBasicChannel(
 		ExtrinsicsRoot: msgPackage.paraHead.ExtrinsicsRoot,
 	}
 	beefyMMRLeafPartial := basic.ParachainLightClientBeefyMMRLeafPartial{
+		Version:              uint8(msgPackage.mmrProof.Leaf.Version),
 		ParentNumber:         uint32(msgPackage.mmrProof.Leaf.ParentNumberAndHash.ParentNumber),
 		ParentHash:           msgPackage.mmrProof.Leaf.ParentNumberAndHash.Hash,
 		NextAuthoritySetId:   uint64(msgPackage.mmrProof.Leaf.BeefyNextAuthoritySet.ID),
@@ -195,6 +196,7 @@ func (wr *EthereumChannelWriter) WriteIncentivizedChannel(
 		ExtrinsicsRoot: msgPackage.paraHead.ExtrinsicsRoot,
 	}
 	beefyMMRLeafPartial := incentivized.ParachainLightClientBeefyMMRLeafPartial{
+		Version:              uint8(msgPackage.mmrProof.Leaf.Version),
 		ParentNumber:         uint32(msgPackage.mmrProof.Leaf.ParentNumberAndHash.ParentNumber),
 		ParentHash:           msgPackage.mmrProof.Leaf.ParentNumberAndHash.Hash,
 		NextAuthoritySetId:   uint64(msgPackage.mmrProof.Leaf.BeefyNextAuthoritySet.ID),
