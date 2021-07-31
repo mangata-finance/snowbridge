@@ -344,25 +344,3 @@ func (li *BeefyListener) checkIncentivizedMessageNonces(
 	}
 	return false, data, nil
 }
-
-// Fetch the latest verified beefy block number and hash from Ethereum
-func (li *BeefyListener) fetchLatestVerifiedBeefyBlock(ctx context.Context) (uint64, types.Hash, error) {
-	number, err := li.beefyLightClient.LatestBeefyBlock(&bind.CallOpts{
-		Pending: false,
-		Context: ctx,
-	})
-	if err != nil {
-		log.WithError(err).Error("Failed to get latest verified beefy block number from ethereum")
-		return 0, types.Hash{}, err
-	}
-
-	hash, err := li.relaychainConn.API().RPC.Chain.GetBlockHash(number)
-	if err != nil {
-		log.WithError(err).Error("Failed to get latest relay chain block hash from relay chain")
-		return 0, types.Hash{}, err
-	}
-	log.WithField("blockHash", hash.Hex()).
-		Info("Got latest relaychain blockhash that has been verified")
-
-	return number, hash, nil
-}

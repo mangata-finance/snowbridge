@@ -77,11 +77,21 @@ func (li *BeefyListener) Start(ctx context.Context, eg *errgroup.Group) error {
 
 	eg.Go(func() error {
 
-		beefyBlockNumber, beefyBlockHash, err := li.fetchLatestVerifiedBeefyBlock(ctx)
+		beefyBlockNumber, beefyBlockHash, err := li.fetchLatestBeefyBlock(ctx)
 		if err != nil {
 			log.WithError(err).Error("Failed to get latest relay chain block number and hash")
 			return err
 		}
+
+		// Fail if the beefy light client hasn't verified any relay chain blocks
+		if beefyBlockNumber == 0 {
+			log.WithField("beefyBlockNumber", 0).Error("No beefy blocks have been verified")
+			return fmt.Errorf("No beefy blocks have been verified")
+		}
+
+		log.WithField(
+			"blockHash", beefyBlockHash.Hex(),
+		).Info("Retrieved latest relaychain blockHash that has been verified")
 
 		paraHead, err := li.relaychainConn.FetchFinalizedParaHead(beefyBlockHash, paraID)
 		if err != nil {
@@ -252,4 +262,25 @@ func (li *BeefyListener) queryBeefyLightClientEvents(ctx context.Context, start 
 	}
 
 	return events, nil
+}
+
+
+// Fetch the latest verified beefy block number and hash from Ethereum
+func (li *BeefyListener) fetchLatestBeefyBlock(ctx context.Context) (uint64, types.Hash, error) {
+	number, err := li.beefyLightClient.LatestBeefyBlock(&bind.CallOpts{
+		Pending: false,
+		Context: ctx,
+	})
+	if err != nil {
+		log.WithError(err).Error("Failed to get latest beefy block number from ethereum")
+		return 0, types.Hash{}, err
+	}
+
+	hash, err := li.relaychainConn.API().RPC.Chain.GetBlockHash(number)
+	if err != nil {
+		log.WithError(err).Error("Failed to retrieve block hash for latest beefy block")
+		return 0, types.Hash{}, err
+	}
+
+	return number, hash, nil
 }
