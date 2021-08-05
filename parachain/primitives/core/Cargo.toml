@@ -17,14 +17,20 @@ hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
 [dependencies.frame-support]
 default-features = false
 version = "2.0.0"
+git = 'https://github.com/mangata-finance/substrate'
+branch="mangata-dev"
 
 [dependencies.sp-std]
 default-features = false
 version = "2.0.0"
+git = 'https://github.com/mangata-finance/substrate'
+branch="mangata-dev"
 
 [dependencies.sp-core]
 default-features = false
 version = "2.0.0"
+git = 'https://github.com/mangata-finance/substrate'
+branch="mangata-dev"
 
 [features]
 default = ["std"]
