@@ -9,12 +9,6 @@ on:
       - '!parachain/docker-compose.yml'
     branches:
       - main
-  pull_request:
-    paths:
-      - 'parachain/**'
-      - '!parachain/README.md'
-      - '!parachain/LICENSE'
-      - '!parachain/docker-compose.yml'
 
 jobs:
   check:
