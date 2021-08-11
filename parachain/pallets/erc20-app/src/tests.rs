@@ -1,6 +1,6 @@
-use super::*;
-use crate::mock::{new_tester, AccountId, MockEvent, MockRuntime, Origin, System, Tokens, ERC20};
-use frame_support::{assert_err, assert_ok};
+use crate::mock::{new_tester, AccountId, Asset, MockEvent, MockRuntime, Origin, System, ERC20};
+use codec::Decode;
+use frame_support::{assert_ok, assert_err};
 use frame_system as system;
 use hex_literal::hex;
 use sp_core::{H160, U256};

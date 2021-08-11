@@ -3,13 +3,11 @@
 use crate::{Module, Trait};
 use sp_core::H256;
 use frame_support::{impl_outer_origin, impl_outer_event, parameter_types, weights::Weight};
-use mangata_primitives::{Amount, Balance, TokenId};
 use sp_runtime::{
 	traits::{BlakeTwo256, IdentityLookup, IdentifyAccount, Verify}, testing::Header, Perbill, MultiSignature
 };
 use frame_system as system;
 
-use artemis_asset as asset;
 use orml_tokens;
 
 impl_outer_origin! {
@@ -24,7 +22,6 @@ impl_outer_event! {
     pub enum MockEvent for MockRuntime {
 		system<T>,
 		asset<T>,
-        orml_tokens<T>,
         test_events<T>,
     }
 }

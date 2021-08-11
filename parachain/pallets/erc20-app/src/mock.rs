@@ -11,7 +11,6 @@ use sp_runtime::{
 };
 use sp_std::convert::From;
 
-use artemis_asset as asset;
 use mangata_primitives::{Amount, Balance, TokenId};
 use orml_tokens::MultiTokenCurrencyAdapter;
 
@@ -27,7 +26,6 @@ impl_outer_event! {
     pub enum MockEvent for MockRuntime {
         system<T>,
         asset<T>,
-        orml_tokens<T>,
         test_events<T>,
     }
 }
