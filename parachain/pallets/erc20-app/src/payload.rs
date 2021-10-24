@@ -26,7 +26,7 @@ impl<AccountId: codec::Decode> Payload<AccountId> {
 	pub fn decode(payload: Vec<u8>) -> Result<Self, DecodeError> {
 		// Decode ethereum Log event from RLP-encoded data
 		let log: Log = rlp::decode(&payload)?;
-		let tokens = EVENT_ABI.decode(log.topics, log.data)?;
+		let tokens = EVENT_ABI.decode(log.topics.iter().map(|log_topic| ethabi::H256::from_slice(log_topic.as_bytes())).collect(), log.data)?;
 		let mut tokens_iter = tokens.iter();
 
 		let sender_addr = match tokens_iter.next().ok_or(DecodeError::InvalidPayload)? {
@@ -50,6 +50,12 @@ impl<AccountId: codec::Decode> Payload<AccountId> {
 			Token::Uint(amount) => *amount,
 			_ => return Err(DecodeError::InvalidPayload)
 		};
+
+		let sender_addr = artemis_ethereum::H160::from_slice(sender_addr.as_bytes());
+		let token_addr = artemis_ethereum::H160::from_slice(token_addr.as_bytes());
+		let mut amount_bytes: [u8; 32] = [0u8; 32];
+		amount.to_little_endian(&mut amount_bytes);
+		let amount = artemis_ethereum::U256::from_little_endian(&mut amount_bytes);
 
 		Ok(Self {
 			sender_addr,

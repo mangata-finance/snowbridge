@@ -40,12 +40,12 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-pub trait Trait: system::Trait + asset::Trait {
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+pub trait Config: system::Config + asset::Config {
+	type Event: From<Event<Self>> + Into<<Self as system::Config>::Event>;
 }
 
 decl_storage! {
-	trait Store for Module<T: Trait> as Erc20Module {
+	trait Store for Module<T: Config> as Erc20Module {
 
 	}
 }
@@ -54,7 +54,7 @@ decl_event!(
     /// Events for the ETH module.
 	pub enum Event<T>
 	where
-		AccountId = <T as system::Trait>::AccountId
+		AccountId = <T as system::Config>::AccountId
 	{
 		/// Signal a cross-chain transfer.
 		Transfer(AccountId, H160, U256),
@@ -62,7 +62,7 @@ decl_event!(
 );
 
 decl_error! {
-	pub enum Error for Module<T: Trait> {
+	pub enum Error for Module<T: Config> {
 		/// The submitted payload could not be decoded.
 		InvalidPayload,
 		/// Asset could not be burned
@@ -74,7 +74,7 @@ decl_error! {
 
 decl_module! {
 
-	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+	pub struct Module<T: Config> for enum Call where origin: T::Origin {
 
 		type Error = Error<T>;
 
@@ -104,7 +104,7 @@ decl_module! {
 			}
 		}
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
 
 	fn handle_event(payload: Payload<T::AccountId>) -> DispatchResult {
 		let asset_id: BridgedAssetId = H160::zero();
@@ -126,7 +126,7 @@ impl<T: Trait> Module<T> {
 	}
 }
 
-impl<T: Trait> Application for Module<T> {
+impl<T: Config> Application for Module<T> {
 	fn handle(payload: Vec<u8>) -> DispatchResult {
 		let payload_decoded = Payload::decode(payload)
 			.map_err(|_| Error::<T>::InvalidPayload)?;

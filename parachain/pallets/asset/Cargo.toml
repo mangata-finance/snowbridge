@@ -8,67 +8,22 @@ edition = "2018"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
+serde = { version = "1.0.101", features = ["derive"], optional = true }
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
-mangata-primitives = { git = 'https://github.com/mangata-finance/mangata-node', default-features = false, version = '0.1.0', rev = "f3ecab" }
-orml-tokens = { git = 'https://github.com/mangata-finance/open-runtime-module-library', default-features = false, version = '0.3.1', branch="mangata-dev" }
+mangata-primitives = { default-features = false, version = '0.1.0', path="../../../../mangata-node/primitives/mangata" }
+orml-tokens = { default-features = false, version = '0.4.0', path="../../../../open-runtime-module-library/tokens"}
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
+frame-support = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/support"}
+frame-system = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/system"}
+sp-core = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/core"}
+sp-io = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/io"}
+sp-runtime = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/runtime"}
+sp-std = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/std"}
+artemis-core = { default-features = false, path = "../../primitives/core"}
+artemis-ethereum = { default-features = false, path = "../../primitives/ethereum"}
 
-[dependencies.codec]
-default-features = false
-features = ["derive"]
-package = "parity-scale-codec"
-version = "1.3.4"
-
-[dependencies.frame-support]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.frame-system]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.sp-core]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.sp-std]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.sp-io]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.sp-runtime]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dev-dependencies.sp-keyring]
-default-features = false
-version = "2.0.0"
-git = 'https://github.com/mangata-finance/substrate'
-branch="mangata-dev"
-
-[dependencies.serde]
-package = "serde"
-optional = true
-version = "1.0.101"
-features = ["derive"]
-
-[dependencies.artemis-core]
-default-features = false
-path = "../../primitives/core"
+[dev-dependencies]
+sp-keyring = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/keyring"}
 
 [features]
 default = ["std"]
