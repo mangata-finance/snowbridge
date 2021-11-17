@@ -70,6 +70,8 @@ decl_error! {
         NullRecipient,
         /// Passed amount is too big
         TooBigAmount,
+        /// Token creation failed
+        TokenCreationFailed
     }
 }
 
@@ -125,7 +127,7 @@ impl<T: Config> Module<T> {
             .or(Err(Error::<T>::TooBigAmount))?;
 
         if !<asset::Module<T>>::exists(sp_core::H160::from_slice(payload.token_addr.as_bytes())) {
-            let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).into();
+            let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).map_err(|_| Error::<T>::TokenCreationFailed)?.into();
             <asset::Module<T>>::link_assets(id, sp_core::H160::from_slice(payload.token_addr.as_bytes()));
         } else {
             let id = <asset::Module<T>>::get_native_asset_id(sp_core::H160::from_slice(payload.token_addr.as_bytes()));

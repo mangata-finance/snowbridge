@@ -10,20 +10,20 @@ repository = "https://github.com/Snowfork/polkadot-ethereum"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-serde = { version = "1.0.101", features = ["derive"], optional = true }
+serde = { version = "1.0.126", features = ["derive"], optional = true }
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
-frame-support = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/support"}
-frame-system = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/system"}
-sp-core = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/core"}
-sp-io = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/io"}
-sp-runtime = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/runtime"}
-sp-std = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/std"}
+frame-support = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/frame/support"}
+frame-system = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/frame/system"}
+sp-core = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/core"}
+sp-io = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/io"}
+sp-runtime = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/runtime"}
+sp-std = { version = "4.0.0-dev", default-features = false, path="../../../../substrate/primitives/std"}
 artemis-core = { default-features = false, path = "../../primitives/core"}
 artemis-ethereum = { default-features = false, path = "../../primitives/ethereum"}
 
 [dev-dependencies]
-sp-keyring = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/keyring"}
+sp-keyring = { version = "4.0.0-dev", default-features = false, path="../../../../substrate/primitives/keyring"}
 
 
 

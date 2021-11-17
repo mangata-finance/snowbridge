@@ -27,10 +27,10 @@ construct_runtime!(
 		NodeBlock = Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
-		System: frame_system::{Module, Call, Storage, Config, Event<T>},
-        BridgedAssets: asset::{Module, Call, Storage, Config<T>, Event<T>},
-		Tokens: orml_tokens::{Module, Storage, Call, Event<T>, Config<T>},
-        ERC20: erc20App::{Module, Storage, Call, Event<T>},
+		System: frame_system::{Pallet, Call, Storage, Config, Event<T>},
+        BridgedAssets: asset::{Pallet, Call, Storage, Config<T>, Event<T>},
+		Tokens: orml_tokens::{Pallet, Storage, Call, Event<T>, Config<T>},
+        ERC20: erc20App::{Pallet, Storage, Call, Event<T>},
 	}
 );
 

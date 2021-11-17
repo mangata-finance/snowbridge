@@ -10,25 +10,25 @@ targets = ["x86_64-unknown-linux-gnu"]
 [dependencies]
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
 rlp = { version = "0.4", default-features = false }
-serde = { version = "1.0.101", features = ["derive"], optional = true }
-hex-literal = { version = "0.3.1", default-features = false }
+serde = { version = "1.0.126", features = ["derive"], optional = true }
+hex-literal = { version = "0.3.3", default-features = false }
 mangata-primitives = { default-features = false, version = '0.1.0', path="../../../../mangata-node/primitives/mangata" }
-orml-tokens = { default-features = false, version = '0.4.0', path="../../../../open-runtime-module-library/tokens"}
+orml-tokens = { default-features = false, version = '0.4.1-dev', path="../../../../open-runtime-module-library/tokens"}
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
-frame-support = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/support"}
-frame-system = { default-features = false, version = '3.0.0' , path="../../../../substrate/frame/system"}
-sp-core = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/core"}
-sp-io = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/io"}
-sp-runtime = { default-features = false, version = '3.0.0' , path="../../../../substrate/primitives/runtime"}
-sp-std = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/std"}
+frame-support = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/frame/support"}
+frame-system = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/frame/system"}
+sp-core = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/core"}
+sp-io = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/io"}
+sp-runtime = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/runtime"}
+sp-std = { version = "4.0.0-dev", default-features = false, path="../../../../substrate/primitives/std"}
 artemis-core = { default-features = false, path = "../../primitives/core"}
 artemis-ethereum = { default-features = false, path = "../../primitives/ethereum"}
 artemis-asset = { default-features = false, path = "../asset"}
 ethabi = { package="ethabi-decode", default-features = false, version = "1.2.1", git = "https://github.com/Snowfork/ethabi-decode"}
 
 [dev-dependencies]
-sp-keyring = { version = "3.0.0", default-features = false, path="../../../../substrate/primitives/keyring"}
-orml-traits = { default-features = false, version = '0.4.0', path="../../../../open-runtime-module-library/traits"}
+sp-keyring = { version = "4.0.0-dev", default-features = false, path="../../../../substrate/primitives/keyring"}
+orml-traits = { default-features = false, version = '0.4.1-dev', path="../../../../open-runtime-module-library/traits"}
 
 [features]
 default = ["std"]
