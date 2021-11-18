@@ -2,7 +2,7 @@
 
 use crate as verifier;
 use sp_core::H256;
-use frame_support::{construct_runtime, parameter_types};
+use frame_support::{construct_runtime, parameter_types, traits::{Everything}};
 use sp_runtime::{
 	traits::{BlakeTwo256, IdentityLookup, IdentifyAccount, Verify}, testing::Header, MultiSignature
 };
@@ -19,8 +19,8 @@ construct_runtime!(
 		NodeBlock = Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
-		System: frame_system::{Module, Call, Storage, Config, Event<T>},
-        Verifier: verifier::{Module, Storage, Call, Event, Config<T>},
+		System: frame_system::{Pallet, Call, Storage, Config, Event<T>},
+        Verifier: verifier::{Pallet, Storage, Call, Event, Config<T>},
 	}
 );
 
@@ -33,7 +33,7 @@ parameter_types! {
 }
 
 impl system::Config for MockRuntime {
-	type BaseCallFilter = ();
+	type BaseCallFilter = Everything;
     type Origin = Origin;
     type Call = Call;
     type Index = u64;
@@ -55,6 +55,7 @@ impl system::Config for MockRuntime {
 	type BlockWeights = ();
 	type BlockLength = ();
 	type SS58Prefix = ();
+	type OnSetCode = ();
 }
 
 impl Config for MockRuntime {

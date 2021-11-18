@@ -62,7 +62,7 @@ fn burn_should_emit_bridge_event() {
         ));
 
         assert_eq!(
-            crate::mock::Event::erc20App(Event::<MockRuntime>::Transfer(token_addr, bob, recipient, 20.into())),
+            crate::mock::Event::ERC20(Event::<MockRuntime>::Transfer(token_addr, bob, recipient, 20.into())),
             last_event()
         );
     });

@@ -7,9 +7,11 @@ edition = "2018"
 [dependencies]
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
 serde = { version = "1.0.126",optional = true }
-frame-support = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/frame/support"}
-sp-core = { default-features = false, version = '4.0.0-dev' , path="../../../../substrate/primitives/core"}
-sp-std = { version = "4.0.0-dev", default-features = false, path="../../../../substrate/primitives/std"}
+scale-info = { version = "1.0", default-features = false, features = ["derive"] }
+
+frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
+sp-core = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
 
 [dev-dependencies]
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }

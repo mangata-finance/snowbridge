@@ -58,7 +58,7 @@ fn burn_should_emit_bridge_event() {
 		assert_ok!(ETH::burn(Origin::signed(bob.clone()), recipient, 20.into()));
 
 		assert_eq!(
-			crate::mock::Event::ethApp(Event::<MockRuntime>::Transfer(bob, recipient, 20.into())),
+			crate::mock::Event::ETH(Event::<MockRuntime>::Transfer(bob, recipient, 20.into())),
 			last_event()
 		);
 	});

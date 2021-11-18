@@ -1,12 +1,12 @@
 // Mock runtime
 
 use crate as erc20App;
-use frame_support::{construct_runtime, parameter_types};
+use frame_support::{PalletId, construct_runtime, parameter_types, traits::{Everything, Contains}};
 use frame_system as system;
 use sp_core::H256;
 use sp_runtime::{
     testing::Header,
-    traits::{BlakeTwo256, IdentifyAccount, IdentityLookup, Verify},
+    traits::{BlakeTwo256, IdentifyAccount, IdentityLookup, Verify, AccountIdConversion},
     MultiSignature,
 };
 use sp_std::convert::From;
@@ -43,7 +43,7 @@ parameter_types! {
 }
 
 impl system::Config for MockRuntime {
-    type BaseCallFilter = ();
+    type BaseCallFilter = Everything;
     type Origin = Origin;
     type Call = Call;
     type Index = u64;
@@ -65,6 +65,7 @@ impl system::Config for MockRuntime {
 	type BlockWeights = ();
 	type BlockLength = ();
 	type SS58Prefix = ();
+	type OnSetCode = ();
 }
 
 parameter_type_with_key! {
@@ -75,6 +76,19 @@ parameter_type_with_key! {
 	};
 }
 
+pub struct DustRemovalWhitelist;
+impl Contains<AccountId> for DustRemovalWhitelist {
+	fn contains(a: &AccountId) -> bool {
+		*a == TreasuryAccount::get() 
+	}
+}
+
+parameter_types! {
+    pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
+    pub TreasuryAccount: AccountId = TreasuryPalletId::get().into_account();
+	pub const MaxLocks: u32 = 50;
+}
+
 impl orml_tokens::Config for MockRuntime {
     type Event = Event;
     type Balance = Balance;
@@ -83,6 +97,8 @@ impl orml_tokens::Config for MockRuntime {
     type WeightInfo = ();
 	type ExistentialDeposits = ExistentialDeposits;
 	type OnDust = ();
+	type MaxLocks = MaxLocks;
+	type DustRemovalWhitelist = DustRemovalWhitelist;
 }
 
 impl asset::Config for MockRuntime {

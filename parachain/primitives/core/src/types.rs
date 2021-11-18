@@ -2,6 +2,7 @@
 
 use sp_std::vec::Vec;
 use sp_core::H160;
+use scale_info::TypeInfo;
 
 use codec::{Encode, Decode};
 #[cfg(feature = "std")]
@@ -13,14 +14,14 @@ use serde::{Deserialize, Serialize};
 /// for cross-chain routing of messages.
 pub type AppId = [u8; 20];
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Encode, Decode, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Encode, Decode, Debug, Eq, PartialEq, TypeInfo)]
 pub enum App {
     ETH,
     ERC20,
 }
 
 /// A message relayed from Ethereum.
-#[derive(Debug, PartialEq, Clone, Encode, Decode)]
+#[derive(Debug, PartialEq, Clone, Encode, Decode, TypeInfo)]
 pub struct Message {
 	/// The raw message payload.
 	///
@@ -35,7 +36,7 @@ pub struct Message {
 ///
 /// This data type allows us to support multiple verification schemes. In the near future,
 /// A light-client scheme will be added too.
-#[derive(Debug, PartialEq, Copy, Clone, Encode, Decode)]
+#[derive(Debug, PartialEq, Copy, Clone, Encode, Decode, TypeInfo)]
 pub enum VerificationInput {
 	/// Basic scheme supports replay protection
 	Basic {

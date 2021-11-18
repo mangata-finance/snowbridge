@@ -1,11 +1,11 @@
 // Mock runtime
 
 use crate as ethApp;
-use frame_support::{construct_runtime, parameter_types};
+use frame_support::{PalletId, construct_runtime, parameter_types, traits::{Everything, Contains}};
 use sp_core::H256;
 use mangata_primitives::{Amount, Balance, TokenId};
 use sp_runtime::{
-	traits::{BlakeTwo256, IdentityLookup, IdentifyAccount, Verify}, testing::Header, MultiSignature
+	traits::{BlakeTwo256, IdentityLookup, IdentifyAccount, Verify, AccountIdConversion}, testing::Header, MultiSignature
 };
 use frame_system as system;
 
@@ -28,10 +28,10 @@ construct_runtime!(
 		NodeBlock = Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
-		System: frame_system::{Module, Call, Storage, Config, Event<T>},
-        BridgedAssets: asset::{Module, Call, Storage, Config<T>, Event<T>},
-		Tokens: orml_tokens::{Module, Storage, Call, Event<T>, Config<T>},
-        ETH: ethApp::{Module, Storage, Call, Event<T>},
+		System: frame_system::{Pallet, Call, Storage, Config, Event<T>},
+        BridgedAssets: asset::{Pallet, Call, Storage, Config<T>, Event<T>},
+		Tokens: orml_tokens::{Pallet, Storage, Call, Event<T>, Config<T>},
+        ETH: ethApp::{Pallet, Storage, Call, Event<T>},
 	}
 );
 
@@ -40,7 +40,7 @@ parameter_types! {
 }
 
 impl system::Config for MockRuntime {
-	type BaseCallFilter = ();
+	type BaseCallFilter = Everything;
     type Origin = Origin;
     type Call = Call;
     type Index = u64;
@@ -62,6 +62,7 @@ impl system::Config for MockRuntime {
 	type BlockWeights = ();
 	type BlockLength = ();
 	type SS58Prefix = ();
+	type OnSetCode = ();
 }
 
 impl asset::Config for MockRuntime {
@@ -77,6 +78,19 @@ parameter_type_with_key! {
 	};
 }
 
+pub struct DustRemovalWhitelist;
+impl Contains<AccountId> for DustRemovalWhitelist {
+	fn contains(a: &AccountId) -> bool {
+		*a == TreasuryAccount::get() 
+	}
+}
+
+parameter_types! {
+    pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
+    pub TreasuryAccount: AccountId = TreasuryPalletId::get().into_account();
+	pub const MaxLocks: u32 = 50;
+}
+
 impl orml_tokens::Config for MockRuntime {
     type Event = Event;
     type Balance = Balance;
@@ -85,6 +99,8 @@ impl orml_tokens::Config for MockRuntime {
     type WeightInfo = ();
 	type ExistentialDeposits = ExistentialDeposits;
 	type OnDust = ();
+	type MaxLocks = MaxLocks;
+	type DustRemovalWhitelist = DustRemovalWhitelist;
 }
 
 impl Config for MockRuntime {

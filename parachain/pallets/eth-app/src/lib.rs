@@ -69,6 +69,8 @@ decl_error! {
 		BurnFailure,
 		/// Passed amount is too big
 		TooBigAmount,
+		/// Token creation failed
+        TokenCreationFailed
 	}
 }
 
@@ -115,7 +117,7 @@ impl<T: Config> Module<T> {
 			.or(Err(Error::<T>::TooBigAmount))?;
 
 		if !<asset::Module<T>>::exists(asset_id) {
-			let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).into();
+			let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).map_err(|_| Error::<T>::TokenCreationFailed)?.into();
 			<asset::Module<T>>::link_assets(id, asset_id);
 		} else {
 			let id = <asset::Module<T>>::get_native_asset_id(asset_id);
