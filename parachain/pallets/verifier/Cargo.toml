@@ -14,17 +14,17 @@ serde = { version = "1.0.126", features = ["derive"], optional = true }
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
 scale-info = { version = "1.0", default-features = false, features = ["derive"] }
-frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-frame-system = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-core = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-io = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-runtime = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
+frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+frame-system = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-core = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-io = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-runtime = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
 artemis-core = { default-features = false, path = "../../primitives/core"}
 artemis-ethereum = { default-features = false, path = "../../primitives/ethereum"}
 
 [dev-dependencies]
-sp-keyring = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
+sp-keyring = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
 
 
 

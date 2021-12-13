@@ -9,9 +9,9 @@ codec = { package = "parity-scale-codec", version = "2.0.0", default-features = 
 serde = { version = "1.0.126",optional = true }
 scale-info = { version = "1.0", default-features = false, features = ["derive"] }
 
-frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-core = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
-sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev"}
+frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-core = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v4"}
 
 [dev-dependencies]
 hex = { package = "rustc-hex", version = "2.1.0", default-features = false }
