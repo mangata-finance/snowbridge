@@ -117,9 +117,9 @@ impl<T: Config> Module<T> {
             return Err(Error::<T>::InvalidAssetId.into());
         }
 
-        if T::AccountId::default() == payload.recipient_addr {
-            return Err(Error::<T>::NullRecipient.into());
-        }
+        // if T::AccountId::default() == payload.recipient_addr {
+        //     return Err(Error::<T>::NullRecipient.into());
+        // }
 
         let amount: Balance = payload
             .amount
