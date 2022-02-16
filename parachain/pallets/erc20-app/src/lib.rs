@@ -66,8 +66,6 @@ decl_error! {
         InvalidPayload,
         /// Asset could not be burned
         BurnFailure,
-        /// The recipient address is null/default value
-        NullRecipient,
         /// Passed amount is too big
         TooBigAmount,
         /// Token creation failed
@@ -116,10 +114,6 @@ impl<T: Config> Module<T> {
         if payload.token_addr.is_zero() {
             return Err(Error::<T>::InvalidAssetId.into());
         }
-
-        // if T::AccountId::default() == payload.recipient_addr {
-        //     return Err(Error::<T>::NullRecipient.into());
-        // }
 
         let amount: Balance = payload
             .amount
