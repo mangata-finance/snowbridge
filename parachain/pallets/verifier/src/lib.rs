@@ -17,7 +17,14 @@
 #![allow(unused_variables)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use frame_system as system;
+use frame_support::{decl_module, decl_storage, decl_event, decl_error,
+	dispatch::DispatchResult};
+use sp_runtime::traits::Hash;
+use sp_std::prelude::*;
+use codec::Decode;
 
+use artemis_core::{AppId, Message, Verifier, VerificationInput};
 
 #[cfg(test)]
 mod mock;
@@ -25,80 +32,48 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-pub use pallet::*;
 
-#[frame_support::pallet]
-pub mod pallet {
-use frame_support::pallet_prelude::*;
-use frame_system::pallet_prelude::*;
-use frame_support::{decl_module, decl_storage, decl_event, decl_error,
-	dispatch::DispatchResult};
-use sp_runtime::traits::Hash;
-use sp_std::prelude::*;
-use artemis_core::{AppId, Message, Verifier, VerificationInput};
-use frame_support::pallet_prelude::*;
-use frame_system::pallet_prelude::*;
-
-#[pallet::event]
-#[pallet::generate_deposit(pub(super) fn deposit_event)]
-pub enum Event {
-	Dummy
+pub trait Config: system::Config {
+	type Event: From<Event> + Into<<Self as system::Config>::Event>;
 }
 
-#[pallet::config]
-pub trait Config: frame_system::Config {
-	type Event: From<Event> + IsType<<Self as frame_system::Config>::Event>;
-}
+decl_storage! {
+	trait Store for Module<T: Config> as VerifierModule {
+		/// The trusted [`AccountId`] of the external relayer service.
+		RelayKey get(fn key) config(): T::AccountId = T::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes()).unwrap();
 
-#[pallet::storage]
-#[pallet::getter(fn key)]
-pub type RelayKey<T:Config> = StorageValue<_, Option<T::AccountId>, ValueQuery>;
-
-#[pallet::genesis_config]
-pub struct GenesisConfig<T: Config> {
-	pub key: Option<T::AccountId>
-}
-
-#[pallet::genesis_build]
-impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
-	fn build(&self) {
-		RelayKey::<T>::put(self.key.clone());
+		/// Hashes of previously seen messages. Used to implement replay protection.
+		pub VerifiedPayloads: map hasher(blake2_128_concat) T::Hash => ();
 	}
 }
 
-#[cfg(feature = "std")]
-impl<T: Config> Default for GenesisConfig<T> {
-	fn default() -> Self {
-		GenesisConfig { key: None }
+decl_event!(
+	pub enum Event {
+
+	}
+);
+
+decl_error! {
+	pub enum Error for Module<T: Config> {
+		/// Verification scheme is not supported.
+		NotSupported,
+		/// The message failed verification.
+		Invalid
 	}
 }
 
-/// Hashes of previously seen messages. Used to implement replay protection.
-#[pallet::storage]
-pub(super) type VerifiedPayloads<T: Config> = StorageMap<_, Blake2_256, T::Hash, (), ValueQuery>;
+decl_module! {
+	pub struct Module<T: Config> for enum Call where origin: T::Origin {
+		type Error = Error<T>;
 
-
-#[pallet::error]
-pub enum Error<T> {
-	/// Verification scheme is not supported.
-	NotSupported,
-	/// The message failed verification.
-	Invalid
+		fn deposit_event() = default;
+	}
 }
 
-
-#[pallet::pallet]
-#[pallet::generate_store(pub(super) trait Store)]
-pub struct Pallet<T>(PhantomData<T>);
-
-#[pallet::call]
-impl<T: Config> Pallet<T> {
-}
-
-impl<T: Config> Pallet<T> {
+impl<T: Config> Module<T> {
 
 	/// Verify a message
-	pub fn do_verify(sender: T::AccountId, app_id: AppId, message: &Message) -> DispatchResult {
+	fn do_verify(sender: T::AccountId, app_id: AppId, message: &Message) -> DispatchResult {
 		Self::verify_sender(sender)?;
 
 		// Hash all inputs together to produce a unique key for the message
@@ -120,19 +95,17 @@ impl<T: Config> Pallet<T> {
 	}
 
 	// Verify that the message sender matches the relayer account
-	pub fn verify_sender(sender: T::AccountId) -> DispatchResult {
-		if let Some(sender) = RelayKey::<T>::get(){
-			Ok(())
-		}else{
+	fn verify_sender(sender: T::AccountId) -> DispatchResult {
+		if sender != RelayKey::<T>::get() {
 			return Err(Error::<T>::Invalid.into())
 		}
+		Ok(())
 	}
 }
 
-impl<T: Config> Verifier<T::AccountId> for Pallet<T> {
+impl<T: Config> Verifier<T::AccountId> for Module<T> {
 	fn verify(sender: T::AccountId, app_id: AppId, message: &Message) -> DispatchResult {
 		Self::do_verify(sender, app_id, message)?;
 		Ok(())
 	}
-}
 }

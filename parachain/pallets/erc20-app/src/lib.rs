@@ -23,6 +23,7 @@ use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch:
 use frame_system::{self as system, ensure_signed};
 use sp_core::{H160, U256};
 use sp_std::prelude::*;
+use codec::Decode;
 
 use artemis_asset as asset;
 use artemis_core::{Application, BridgedAssetId};
@@ -66,6 +67,8 @@ decl_error! {
         InvalidPayload,
         /// Asset could not be burned
         BurnFailure,
+        /// The recipient address is null/default value
+        NullRecipient,
         /// Passed amount is too big
         TooBigAmount,
         /// Token creation failed
@@ -113,6 +116,11 @@ impl<T: Config> Module<T> {
     fn handle_event(payload: Payload<T::AccountId>) -> DispatchResult {
         if payload.token_addr.is_zero() {
             return Err(Error::<T>::InvalidAssetId.into());
+        }
+
+
+        if T::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes()).unwrap() == payload.recipient_addr {
+            return Err(Error::<T>::NullRecipient.into());
         }
 
         let amount: Balance = payload
