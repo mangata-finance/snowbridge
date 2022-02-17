@@ -23,6 +23,7 @@ use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch:
 use frame_system::{self as system, ensure_signed};
 use sp_core::{H160, U256};
 use sp_std::prelude::*;
+use codec::Decode;
 
 use artemis_asset as asset;
 use artemis_core::{Application, BridgedAssetId};
@@ -117,7 +118,8 @@ impl<T: Config> Module<T> {
             return Err(Error::<T>::InvalidAssetId.into());
         }
 
-        if T::AccountId::default() == payload.recipient_addr {
+
+        if T::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes()).unwrap() == payload.recipient_addr {
             return Err(Error::<T>::NullRecipient.into());
         }
 

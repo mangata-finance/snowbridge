@@ -63,6 +63,7 @@ impl system::Config for MockRuntime {
 	type BlockLength = ();
 	type SS58Prefix = ();
 	type OnSetCode = ();
+	type MaxConsumers = frame_support::traits::ConstU32<16>;
 }
 
 impl asset::Config for MockRuntime {
