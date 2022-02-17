@@ -1,55 +1,51 @@
 // Mock runtime
 
-use crate::{Module, Trait};
-use frame_support::{impl_outer_event, impl_outer_origin, parameter_types, weights::Weight};
+use crate as erc20App;
+use frame_support::{PalletId, construct_runtime, parameter_types, traits::{Everything, Contains}};
 use frame_system as system;
 use sp_core::H256;
 use sp_runtime::{
     testing::Header,
-    traits::{BlakeTwo256, IdentifyAccount, IdentityLookup, Verify},
-    MultiSignature, Perbill,
+    traits::{BlakeTwo256, IdentifyAccount, IdentityLookup, Verify, AccountIdConversion},
+    MultiSignature,
 };
 use sp_std::convert::From;
 
-use artemis_asset as asset;
+pub use artemis_asset as asset;
 use mangata_primitives::{Amount, Balance, TokenId};
 use orml_tokens::MultiTokenCurrencyAdapter;
+use orml_traits::parameter_type_with_key;
 
-impl_outer_origin! {
-    pub enum Origin for MockRuntime {}
-}
+use super::*;
 
-mod test_events {
-    pub use crate::Event;
-}
+type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<MockRuntime>;
+type Block = frame_system::mocking::MockBlock<MockRuntime>;
 
-impl_outer_event! {
-    pub enum MockEvent for MockRuntime {
-        system<T>,
-        asset<T>,
-        orml_tokens<T>,
-        test_events<T>,
-    }
-}
+construct_runtime!(
+	pub enum MockRuntime where
+		Block = Block,
+		NodeBlock = Block,
+		UncheckedExtrinsic = UncheckedExtrinsic,
+	{
+		System: frame_system::{Pallet, Call, Storage, Config, Event<T>},
+        BridgedAssets: asset::{Pallet, Call, Storage, Config<T>, Event<T>},
+		Tokens: orml_tokens::{Pallet, Storage, Call, Event<T>, Config<T>},
+        ERC20: erc20App::{Pallet, Storage, Call, Event<T>},
+	}
+);
 
 pub type Signature = MultiSignature;
 
 pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 
-#[derive(Clone, Eq, PartialEq)]
-pub struct MockRuntime;
-
 parameter_types! {
     pub const BlockHashCount: u64 = 250;
-    pub const MaximumBlockWeight: Weight = 1024;
-    pub const MaximumBlockLength: u32 = 2 * 1024;
-    pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
 }
 
-impl system::Trait for MockRuntime {
-    type BaseCallFilter = ();
+impl system::Config for MockRuntime {
+    type BaseCallFilter = Everything;
     type Origin = Origin;
-    type Call = ();
+    type Call = Call;
     type Index = u64;
     type BlockNumber = u64;
     type Hash = H256;
@@ -57,44 +53,63 @@ impl system::Trait for MockRuntime {
     type AccountId = AccountId;
     type Lookup = IdentityLookup<Self::AccountId>;
     type Header = Header;
-    type Event = MockEvent;
+    type Event = Event;
     type BlockHashCount = BlockHashCount;
-    type MaximumBlockWeight = MaximumBlockWeight;
     type DbWeight = ();
-    type BlockExecutionWeight = ();
-    type ExtrinsicBaseWeight = ();
-    type MaximumExtrinsicWeight = MaximumBlockWeight;
-    type MaximumBlockLength = MaximumBlockLength;
-    type AvailableBlockRatio = AvailableBlockRatio;
     type Version = ();
-    type PalletInfo = ();
     type AccountData = ();
     type OnNewAccount = ();
     type OnKilledAccount = ();
     type SystemWeightInfo = ();
+	type PalletInfo = PalletInfo;
+	type BlockWeights = ();
+	type BlockLength = ();
+	type SS58Prefix = ();
+	type OnSetCode = ();
+	type MaxConsumers = frame_support::traits::ConstU32<16>;
 }
 
-impl orml_tokens::Trait for MockRuntime {
-    type Event = MockEvent;
+parameter_type_with_key! {
+	pub ExistentialDeposits: |currency_id: TokenId| -> Balance {
+		match currency_id {
+			_ => 0,
+		}
+	};
+}
+
+pub struct DustRemovalWhitelist;
+impl Contains<AccountId> for DustRemovalWhitelist {
+	fn contains(a: &AccountId) -> bool {
+		*a == TreasuryAccount::get() 
+	}
+}
+
+parameter_types! {
+    pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
+    pub TreasuryAccount: AccountId = TreasuryPalletId::get().into_account();
+	pub const MaxLocks: u32 = 50;
+}
+
+impl orml_tokens::Config for MockRuntime {
+    type Event = Event;
     type Balance = Balance;
     type Amount = Amount;
     type CurrencyId = TokenId;
-    type OnReceived = ();
     type WeightInfo = ();
+	type ExistentialDeposits = ExistentialDeposits;
+	type OnDust = ();
+	type MaxLocks = MaxLocks;
+	type DustRemovalWhitelist = DustRemovalWhitelist;
 }
 
-impl asset::Trait for MockRuntime {
-    type Event = MockEvent;
+impl asset::Config for MockRuntime {
+    type Event = Event;
     type Currency = MultiTokenCurrencyAdapter<MockRuntime>;
 }
 
-impl Trait for MockRuntime {
-    type Event = MockEvent;
+impl Config for MockRuntime {
+    type Event = Event;
 }
-
-pub type System = system::Module<MockRuntime>;
-pub type Tokens = <MockRuntime as asset::Trait>::Currency;
-pub type ERC20 = Module<MockRuntime>;
 
 pub fn new_tester() -> sp_io::TestExternalities {
     let storage = system::GenesisConfig::default()

@@ -45,13 +45,13 @@ pub struct AccountData {
 }
 
 
-pub trait Trait: frame_system::Trait {
-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+pub trait Config: frame_system::Config {
+	type Event: From<Event<Self>> + Into<<Self as system::Config>::Event>;
 	type Currency: MultiTokenCurrencyExtended<Self::AccountId>;
 }
 
 decl_storage! {
-	trait Store for Module<T: Trait> as Asset {
+	trait Store for Module<T: Config> as Asset {
 		pub NativeAsset get(fn get_native_asset_id): map hasher(blake2_128_concat) BridgedAssetId => TokenId;
 		pub BridgedAsset get(fn get_bridged_asset_id): map hasher(blake2_128_concat) TokenId => BridgedAssetId;
 	}
@@ -61,7 +61,7 @@ decl_storage! {
 		build(|config: &GenesisConfig<T>|
 		{
 			for (native_asset_id, bridged_asset_id, initial_supply, initial_owner) in config.bridged_assets_links.iter(){
-				let initialized_asset_id: TokenId = T::Currency::create(&initial_owner, {*initial_supply}.into()).into();
+				let initialized_asset_id: TokenId = T::Currency::create(&initial_owner, {*initial_supply}.into()).expect("Token creation failed").into();
 				assert!(initialized_asset_id == *native_asset_id, "Assets not initialized in the sequence of the asset ids provided");
 				Module::<T>::link_assets(native_asset_id.to_owned(), bridged_asset_id.to_owned());
 
@@ -74,7 +74,7 @@ decl_storage! {
 decl_event!(
 	pub enum Event<T>
 	where
-		AccountId = <T as system::Trait>::AccountId,
+		AccountId = <T as system::Config>::AccountId,
 	{
 		Burned(BridgedAssetId, AccountId, U256),
 		Minted(BridgedAssetId, AccountId, U256),
@@ -83,7 +83,7 @@ decl_event!(
 );
 
 decl_error! {
-	pub enum Error for Module<T: Trait> {
+	pub enum Error for Module<T: Config> {
 		/// Free balance got overflowed after transfer.
 		FreeTransferOverflow,
 		/// Total issuance got overflowed after minting.
@@ -100,7 +100,7 @@ decl_error! {
 
 decl_module! {
 
-	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+	pub struct Module<T: Config> for enum Call where origin: T::Origin {
 
 		type Error = Error<T>;
 
@@ -109,14 +109,14 @@ decl_module! {
 		/// Transfer some free balance to another account.
 		// TODO: Calculate weight
 		#[weight = 0]
-		pub fn transfer(origin, asset_id: BridgedAssetId, to: T::AccountId, amount: U256) -> DispatchResult {
+		pub fn transfer(_origin, _asset_id: BridgedAssetId, _to: T::AccountId, _amount: U256) -> DispatchResult {
 			Ok(())
 		}
 
 	}
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
 	pub fn link_assets(native_asset_id: TokenId, bridged_asset_id: BridgedAssetId) {
 		NativeAsset::insert(bridged_asset_id, native_asset_id);
 		BridgedAsset::insert(native_asset_id, bridged_asset_id);

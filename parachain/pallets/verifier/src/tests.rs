@@ -1,10 +1,8 @@
-use crate::mock::{new_tester, AccountId, Verifier, MockRuntime};
+use crate::{mock::{Verifier, *}, Error};
 use frame_support::{assert_ok, assert_noop};
 use sp_keyring::AccountKeyring as Keyring;
 
 use artemis_core::{Message, VerificationInput};
-
-use crate::Error;
 
 #[test]
 fn it_verifies_different_messages() {

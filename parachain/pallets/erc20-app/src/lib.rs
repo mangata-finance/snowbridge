@@ -23,6 +23,7 @@ use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch:
 use frame_system::{self as system, ensure_signed};
 use sp_core::{H160, U256};
 use sp_std::prelude::*;
+use codec::Decode;
 
 use artemis_asset as asset;
 use artemis_core::{Application, BridgedAssetId};
@@ -39,19 +40,19 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-pub trait Trait: system::Trait + asset::Trait {
-    type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+pub trait Config: system::Config + asset::Config {
+    type Event: From<Event<Self>> + Into<<Self as system::Config>::Event>;
 }
 
 decl_storage! {
-    trait Store for Module<T: Trait> as Erc20Module {}
+    trait Store for Module<T: Config> as Erc20Module {}
 }
 
 decl_event!(
     /// Events for the ERC20 module.
     pub enum Event<T>
     where
-        AccountId = <T as system::Trait>::AccountId,
+        AccountId = <T as system::Config>::AccountId,
     {
         /// Signal a cross-chain transfer.
         Transfer(BridgedAssetId, AccountId, H160, U256),
@@ -59,7 +60,7 @@ decl_event!(
 );
 
 decl_error! {
-    pub enum Error for Module<T: Trait> {
+    pub enum Error for Module<T: Config> {
         /// Asset ID is invalid.
         InvalidAssetId,
         /// The submitted payload could not be decoded.
@@ -70,12 +71,14 @@ decl_error! {
         NullRecipient,
         /// Passed amount is too big
         TooBigAmount,
+        /// Token creation failed
+        TokenCreationFailed
     }
 }
 
 decl_module! {
 
-    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+    pub struct Module<T: Config> for enum Call where origin: T::Origin {
 
         type Error = Error<T>;
 
@@ -109,13 +112,14 @@ decl_module! {
     }
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
     fn handle_event(payload: Payload<T::AccountId>) -> DispatchResult {
         if payload.token_addr.is_zero() {
             return Err(Error::<T>::InvalidAssetId.into());
         }
 
-        if T::AccountId::default() == payload.recipient_addr {
+
+        if T::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes()).unwrap() == payload.recipient_addr {
             return Err(Error::<T>::NullRecipient.into());
         }
 
@@ -124,11 +128,11 @@ impl<T: Trait> Module<T> {
             .try_into()
             .or(Err(Error::<T>::TooBigAmount))?;
 
-        if !<asset::Module<T>>::exists(payload.token_addr) {
-            let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).into();
-            <asset::Module<T>>::link_assets(id, payload.token_addr);
+        if !<asset::Module<T>>::exists(sp_core::H160::from_slice(payload.token_addr.as_bytes())) {
+            let id: TokenId = T::Currency::create(&payload.recipient_addr, amount.into()).map_err(|_| Error::<T>::TokenCreationFailed)?.into();
+            <asset::Module<T>>::link_assets(id, sp_core::H160::from_slice(payload.token_addr.as_bytes()));
         } else {
-            let id = <asset::Module<T>>::get_native_asset_id(payload.token_addr);
+            let id = <asset::Module<T>>::get_native_asset_id(sp_core::H160::from_slice(payload.token_addr.as_bytes()));
             T::Currency::mint(id.into(), &payload.recipient_addr, amount.into())?;
         }
 
@@ -136,7 +140,7 @@ impl<T: Trait> Module<T> {
     }
 }
 
-impl<T: Trait> Application for Module<T> {
+impl<T: Config> Application for Module<T> {
     fn handle(payload: Vec<u8>) -> DispatchResult {
         let payload_decoded = Payload::decode(payload).map_err(|_| Error::<T>::InvalidPayload)?;
 
