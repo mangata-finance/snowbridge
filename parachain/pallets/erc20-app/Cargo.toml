@@ -14,22 +14,22 @@ serde = { version = "1.0.126", features = ["derive"], optional = true }
 hex-literal = { version = "0.3.3", default-features = false }
 scale-info = { version = "1.0", default-features = false, features = ["derive"] }
 mangata-primitives = { default-features = false, version = '0.1.0', git = "https://github.com/mangata-finance/mangata-node", branch = "develop" }
-orml-tokens = { default-features = false, version = '0.4.1-dev', git = "https://github.com/mangata-finance/open-runtime-module-library", branch = "mangata-dev-v0.9.16"}
+orml-tokens = { default-features = false, version = '0.4.1-dev', git = "https://github.com/mangata-finance/open-runtime-module-library", branch = "mangata-dev-v0.9.17"}
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
-frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-frame-system = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-sp-core = { default-features = false, version = '4.1.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-sp-io = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-sp-runtime = { default-features = false, version = '4.1.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
+frame-support = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+frame-system = { default-features = false, version = '4.0.0-dev' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+sp-core = { default-features = false, version = '5.0.0' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+sp-io = { default-features = false, version = '5.0.0' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+sp-runtime = { default-features = false, version = '5.0.0' , git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+sp-std = { version = "4.0.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
 artemis-core = { default-features = false, path = "../../primitives/core"}
 artemis-ethereum = { default-features = false, path = "../../primitives/ethereum"}
 artemis-asset = { default-features = false, path = "../asset"}
 ethabi = { package="ethabi-decode", default-features = false, version = "1.2.1", git = "https://github.com/Snowfork/ethabi-decode"}
 
 [dev-dependencies]
-sp-keyring = { version = "4.1.0-dev", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.16"}
-orml-traits = { default-features = false, version = '0.4.1-dev', git = "https://github.com/mangata-finance/open-runtime-module-library", branch = "mangata-dev-v0.9.16"}
+sp-keyring = { version = "5.0.0", default-features = false, git = "https://github.com/mangata-finance/substrate", branch = "mangata-dev-v0.9.17"}
+orml-traits = { default-features = false, version = '0.4.1-dev', git = "https://github.com/mangata-finance/open-runtime-module-library", branch = "mangata-dev-v0.9.17"}
 
 [features]
 default = ["std"]
