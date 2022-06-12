@@ -23,7 +23,7 @@ use frame_support::{decl_module, decl_storage, decl_event, decl_error,
 use sp_runtime::traits::Hash;
 use sp_std::prelude::*;
 use codec::Decode;
-
+use sp_std::convert::TryInto;
 use artemis_core::{AppId, Message, Verifier, VerificationInput};
 
 #[cfg(test)]
