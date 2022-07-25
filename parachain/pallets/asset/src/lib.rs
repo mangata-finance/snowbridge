@@ -36,6 +36,7 @@ use mangata_primitives::{Balance, TokenId};
 use orml_tokens::MultiTokenCurrencyExtended;
 use sp_core::{RuntimeDebug, U256};
 use sp_std::prelude::*;
+use sp_std::convert::TryInto;
 
 use artemis_core::BridgedAssetId;
 
